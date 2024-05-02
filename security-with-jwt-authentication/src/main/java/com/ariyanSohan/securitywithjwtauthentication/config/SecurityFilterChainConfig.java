@@ -24,6 +24,13 @@ public class SecurityFilterChainConfig {
         this.jwtAuthenticationFilter = jwtAuthenticationFilter;
     }
 
+//    private static final String[] SWAGGER_WHITELIST = {
+//      "/swagger-ui/**",
+//      "/v3/api-docs/**",
+//      "swagger-resources/**",
+//      "swagger-resources"
+//    };
+
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
         httpSecurity.cors(corsConfig->corsConfig.configurationSource(getConfigurationSource()));
@@ -37,7 +44,7 @@ public class SecurityFilterChainConfig {
                 requestMatcher ->
                         requestMatcher.requestMatchers("/api/auth/authenticate/**").permitAll()
                                 .requestMatchers("/api/auth/sign-up/**").permitAll()
-                                .requestMatchers("/api/auth/verify-token/**").permitAll()
+                                .requestMatchers("/v3/api-docs/**", "/swagger-ui/**").permitAll()
                                 .anyRequest().authenticated()
         );
 
@@ -69,3 +76,32 @@ public class SecurityFilterChainConfig {
         return  source;
     }
 }
+
+
+
+// ----------------- AlterNative Conifuguration---------------------
+// Alternative
+//@Bean
+//public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+//    return http.cors(AbstractHttpConfigurer::disable)
+//            .csrf(AbstractHttpConfigurer::disable)
+//            .exceptionHandling(exceptionHandlingConfigurer -> exceptionHandlingConfigurer.authenticationEntryPoint(unauthorizedHandler))
+//            .authorizeHttpRequests(authorizationManagerRequestMatcherRegistry -> {
+//                        try {
+//                            authorizationManagerRequestMatcherRegistry
+//                                    .requestMatchers(HttpMethod.POST, POST_AUTH_WHITELIST).permitAll()
+//                                    .requestMatchers(HttpMethod.GET, GET_AUTH_WHITELIST).permitAll()
+//                                    .requestMatchers("/v3/api-docs/**", "/swagger-ui/**").permitAll()
+//                                    .anyRequest()
+//                                    .authenticated()
+//                                    .and()
+//                                    .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
+//                        } catch (Exception e) {
+//                            throw new ResourceNotFoundException(e.getMessage());
+//                        }
+//                    }
+//            )
+//            .formLogin(AbstractHttpConfigurer::disable)
+//            .httpBasic(AbstractHttpConfigurer::disable).addFilterBefore(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class)
+//            .authenticationProvider(daoAuthenticationProvider()).build();
+//}
